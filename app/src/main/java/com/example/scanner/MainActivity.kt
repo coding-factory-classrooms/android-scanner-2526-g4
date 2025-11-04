@@ -19,7 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,9 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.scanner.ui.theme.ScannerTheme
-import kotlinx.coroutines.launch
 import coil3.compose.AsyncImage
 
 class MainActivity : ComponentActivity() {
@@ -56,20 +53,16 @@ fun ApiScreen(cardId: Int) {
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    val coroutineScope = rememberCoroutineScope()
-
     // LaunchedEffect exécute l'appel API une seule fois au démarrage du composable, sinn ça fait des requetes à l'infini askip (j'ai pas tout compris la dessus)
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            try {
-                // Appel API
-                val fetchedCard = ApiService.getCardById(cardId)
-                card = fetchedCard
-            } catch (e: Exception) {
-                error = "Erreur de chargement: ${e.localizedMessage}"
-            } finally {
-                isLoading = false
-            }
+        try {
+            // Appel API
+            val fetchedCard = ApiService.getCardById(cardId)
+            card = fetchedCard
+        } catch (e: Exception) {
+            error = "Erreur de chargement: ${e.localizedMessage}"
+        } finally {
+            isLoading = false
         }
     }
 
@@ -97,7 +90,7 @@ fun ApiScreen(cardId: Int) {
                     Spacer(Modifier.height(height = 32.dp))
                     Text(card!!.name)
                     Spacer(Modifier.height(height = 32.dp))
-                    // Pour l'instant l'image ne charge pas jsp pourquoi
+                    // Pour l'instant l'image ne charge pas jsp pourquoi, ptet essayer une autre lib -> picasso
                     AsyncImage(
                         model = card!!.iconUrls.medium,
                         contentDescription = card!!.name,
