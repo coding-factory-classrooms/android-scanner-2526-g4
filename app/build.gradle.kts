@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -70,4 +72,15 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Ktor Client, use to do query to an api
+    implementation("io.ktor:ktor-client-core:3.3.1")
+    implementation("io.ktor:ktor-client-android:3.3.1")
+
+    // Ktor Serialization, use to read the json data
+    implementation("io.ktor:ktor-client-content-negotiation:3.3.1")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.1")
+
+    // Display an image from a url
+    implementation("io.coil-kt.coil3:coil-compose:3.3.0")
 }
