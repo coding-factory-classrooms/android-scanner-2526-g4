@@ -83,4 +83,7 @@ dependencies {
 
     // Display an image from a url
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+
+    // BDD
+    implementation("io.github.pilgr:paperdb:2.7.2")
 }
