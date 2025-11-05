@@ -99,4 +99,19 @@ dependencies {
 
     //BDD
     implementation("io.github.pilgr:paperdb:2.7.2")
+
+    //Icons
+    implementation("androidx.compose.material:material-icons-extended:1.7.3")
+
+    // CameraX pour gérer la lecture de la camera
+    implementation("androidx.camera:camera-core:1.3.4")
+    implementation("androidx.camera:camera-camera2:1.3.4")
+    implementation("androidx.camera:camera-lifecycle:1.3.4")
+    implementation("androidx.camera:camera-view:1.3.4")
+
+    // ZXing pour décoder le QR code
+    implementation("com.google.zxing:core:3.5.3")
+
+    // (optionnel) Compose permissions
+    implementation("com.google.accompanist:accompanist-permissions:0.36.0")
 }

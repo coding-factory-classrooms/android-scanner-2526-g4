@@ -14,7 +14,6 @@ import io.paperdb.Paper
 
 object ApiService {
 
-    // Initialisation du client Ktor
     private val API_KEY = BuildConfig.CLASH_ROYALE_API_KEY;
     private val BASE_URL = "https://api.clashroyale.com/v1"
 
