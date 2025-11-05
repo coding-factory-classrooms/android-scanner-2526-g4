@@ -30,9 +30,6 @@ import io.paperdb.Paper
 
 @Composable
 fun ApiScreen(cardId: Int) {
-    val context = LocalContext.current
-
-    Paper.init(context);
     val paperKey = "card_${cardId}"
 
     var card by remember { mutableStateOf<Card?>(null) }

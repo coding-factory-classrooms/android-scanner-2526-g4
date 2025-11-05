@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        Paper.init(this)
         setContent {
             ScannerTheme {
                 // 26000001 c'est l'id d'une des cartes, oui c'est chelou me demandez pas pk
