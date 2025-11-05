@@ -80,18 +80,16 @@ fun ApiScreen(cardId: Int) {
                     )
                 }
                 card != null -> {
-                    Text("Card ID: ${card!!.id}")
+                    //Text("Card ID: ${card!!.id}")
                     Spacer(Modifier.height(height = 32.dp))
                     Text(card!!.name)
                     Spacer(Modifier.height(height = 32.dp))
-                    // Pour l'instant l'image ne charge pas jsp pourquoi, ptet essayer une autre lib -> picasso
                     AsyncImage(
                         model = card!!.iconUrls.medium,
                         contentDescription = card!!.name,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(500.dp)
-                            .background(Color.Gray),
+                            .height(250.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
