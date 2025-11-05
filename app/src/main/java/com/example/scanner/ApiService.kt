@@ -9,13 +9,12 @@ import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import com.example.scanner.BuildConfig
+import io.paperdb.Paper
 
 
 object ApiService {
 
-    // Initialisation du client Ktor
-    // (On est pas censé mettre la clé de l'api en dur mais osef + ça a l'air galère de bien le faire)
-    private val API_KEY = BuildConfig.CLASH_ROYALE_API_KEY
+    private val API_KEY = BuildConfig.CLASH_ROYALE_API_KEY;
     private val BASE_URL = "https://api.clashroyale.com/v1"
 
 
@@ -31,14 +30,13 @@ object ApiService {
     }
 
     suspend fun fetchAllCards(): CardListResponse {
-        val url = "$BASE_URL/cards" // Va chercher dans la partie cards de l'api
+        val url = "$BASE_URL/cards"
 
-        // Rajoute la clé de notre api
         val response = client.get(url) {
             header("Authorization", API_KEY)
         }
 
-        if (response.status.value != 200) { // Si vous avez cette erreur c'est surement parce que votre adresse ip n'est pas renseignée dans la clé de l'api, faut me demander ou créer la votre -> https://developer.clashroyale.com/
+        if (response.status.value != 200) {
             throw Exception("Échec API: Statut ${response.status.value}. Clé Bearer invalide ou expirée.")
         }
 
@@ -51,6 +49,6 @@ object ApiService {
         val cardListResponse = fetchAllCards()
 
         return cardListResponse.items.firstOrNull { it.id == id }
-            ?: throw IllegalStateException("Carte non trouvée.") // La gestion d'erreur est surement useless ici vu qu'on generera les qrcode nous même mais au cas où
+            ?: throw IllegalStateException("Carte non trouvée.")
     }
 }
