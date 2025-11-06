@@ -1,5 +1,7 @@
 package com.example.scanner.list
 
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scanner.ApiService
@@ -7,6 +9,9 @@ import com.example.scanner.ApiService.getCardById
 import com.example.scanner.Card
 import com.example.scanner.OwnedCard
 import io.paperdb.Paper
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanIntentResult
+import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
