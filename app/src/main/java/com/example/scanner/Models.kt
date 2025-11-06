@@ -1,6 +1,8 @@
 package com.example.scanner
 
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
+import java.util.Date
 
 
 // Besoin d'une class que pour les icons car il peux y avoir plusieurs type d'icons
@@ -24,10 +26,11 @@ data class Card(
     val elixirCost: Int? = null,
     val iconUrls: IconUrls,
     val rarity: String,
-    val isOwned: Boolean = false,
-    val count: Int = 0,
-    val isFavorite: Boolean = false,
+    val isOwned: Boolean? = false,
+    val count: Int? = 0,
+    val isFavorite: Boolean? = false,
     val acquisitionDate: Long? = null,
+//    val updatedAt: LocalDateTime = LocalDateTime.now()
 )
 
 data class OwnedCard(
@@ -35,4 +38,5 @@ data class OwnedCard(
     val count: Int = 0,
     val acquisitionDate: Long? = null,
     val isFavorite: Boolean = false,
+//    val isUnlock: Boolean? = false
 )

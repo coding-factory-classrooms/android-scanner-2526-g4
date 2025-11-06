@@ -39,9 +39,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
+import com.example.scanner.ApiService
 import com.example.scanner.Card
 import com.example.scanner.DbService
 import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.runBlocking
 
@@ -87,6 +89,7 @@ fun CardListScreen(vm: CardListViewModel= viewModel()) {
                     options.setCameraId(0)
                     options.setBeepEnabled(true)
                     options.setBarcodeImageEnabled(true)
+                    options.setOrientationLocked(false)
                     qrCodeLauncher.launch(ScanOptions())
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -148,7 +151,10 @@ fun CardListBody(state: CardListUiState) {
 
 @Composable
 fun CardItems(card: Card) {
-    val colorFilter = if (card.isOwned) {
+    // a changer de place stp (au moi de ce soir)
+    val context = LocalContext.current
+
+    val colorFilter = if (card.isOwned == true) {
         null
     } else {
         val grayScaleMatrix = ColorMatrix().apply {
@@ -156,9 +162,22 @@ fun CardItems(card: Card) {
         }
         ColorFilter.colorMatrix(grayScaleMatrix)
     }
+
     AsyncImage(
         model = card.iconUrls.medium,
         contentDescription = card.name,
-        colorFilter = colorFilter
+        colorFilter = colorFilter,
+        modifier = Modifier
+            .padding(4.dp)
+            .size(100.dp)
+            .clickable {
+                if(card.isOwned == true){
+                    val intent = Intent(context, DetailActivity::class.java)
+                    intent.putExtra("card_id", card.id)
+                    context.startActivity(intent)
+                }else {
+                    Toast.makeText(context, "Débloque la carte avant stp enft", Toast.LENGTH_LONG).show()
+                }
+            }
     )
 }

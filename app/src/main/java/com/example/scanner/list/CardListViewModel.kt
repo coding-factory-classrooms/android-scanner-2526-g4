@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scanner.ApiService
 import com.example.scanner.Card
+import com.example.scanner.DbService
 import com.example.scanner.OwnedCard
 import io.paperdb.Paper
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,40 +16,42 @@ sealed class CardListUiState {
     data class Failure(val message: String) : CardListUiState()
 }
 
-private const val DB_KEY = "cards"
-
 class CardListViewModel : ViewModel() {
     val uiStateFlow = MutableStateFlow<CardListUiState>(CardListUiState.Loading)
 
-    private fun getOwnedCardsFromDb(): MutableMap<Int, OwnedCard> {
-        return Paper.book().read(DB_KEY, emptyMap<Int, OwnedCard>())!!.toMutableMap()
-    }
-
      fun loadCards() {
          viewModelScope.launch {
-             uiStateFlow.value = CardListUiState.Loading
+             try {
+                 uiStateFlow.value = CardListUiState.Loading
 
-             val cardListResponse = ApiService.fetchAllCards().items
-             val ownedCards = getOwnedCardsFromDb()
+                 val db = DbService()
+                 val cardListResponse = ApiService.fetchAllCards().items
+                 val ownedCards = db.getAllCard()
 
-             val finalCards = cardListResponse.map { apiCard ->
+                 val finalCards = cardListResponse.map { apiCard ->
                  val ownedCard = ownedCards[apiCard.id]
 
-                 if (ownedCard != null) {
-                     apiCard.copy(
-                         isOwned = true,
-                         count = ownedCard.count,
-                         isFavorite = ownedCard.isFavorite
-                     )
-                 } else {
-                     apiCard.copy(
-                         isOwned = false,
-                         count = 0,
-                         isFavorite = false
-                     )
+                     if (ownedCard != null) {
+                         apiCard.copy(
+                             isOwned = true,
+                             count = 1,
+                             isFavorite = false
+                         )
+                     } else {
+                         apiCard.copy(
+                             isOwned = false,
+                             count = 0,
+                             isFavorite = false
+                         )
+                     }
                  }
+                 uiStateFlow.value = CardListUiState.Success(finalCards)
+
+             } catch (e: Exception) {
+                 println("ERROR: ${e.message}")
+                 e.printStackTrace()
+                 uiStateFlow.value = CardListUiState.Failure(e.message ?: "Erreur inconnue")
              }
-             uiStateFlow.value = CardListUiState.Success(finalCards)
          }
      }
 }

@@ -44,9 +44,6 @@ object ApiService {
     suspend fun getCardById(id: Int): Card {
         val cardListResponse = fetchAllCards()
 
-        return cardListResponse.items.firstOrNull {
-            it.id == id
-        }
-            ?: throw IllegalStateException("Carte non trouvée.")
+        return cardListResponse.items.firstOrNull { it.id == id }?: throw IllegalStateException("Carte non trouvée.")
     }
 }
