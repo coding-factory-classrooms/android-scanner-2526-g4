@@ -1,14 +1,11 @@
 package com.example.scanner.list
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,6 +18,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,17 +30,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
-import com.example.scanner.ApiService
 import com.example.scanner.Card
 import com.example.scanner.DbService
 import com.journeyapps.barcodescanner.ScanContract
-import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.runBlocking
 
@@ -89,8 +88,6 @@ fun CardListScreen(vm: CardListViewModel= viewModel()) {
                     options.setBeepEnabled(true)
                     options.setBarcodeImageEnabled(true)
                     qrCodeLauncher.launch(ScanOptions())
-//                   val intent = Intent(context, ScannerActivity::class.java)
-//                    context.startActivity(intent)
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White
@@ -108,6 +105,7 @@ fun CardListScreen(vm: CardListViewModel= viewModel()) {
 
 @Composable
 fun CardListBody(state: CardListUiState) {
+    var query by remember {mutableStateOf("")}
     when(state) {
         is CardListUiState.Failure -> Text(state.message)
         CardListUiState.Loading -> Column(
@@ -117,11 +115,32 @@ fun CardListBody(state: CardListUiState) {
         ) {
             CircularProgressIndicator()
         }
-        is CardListUiState.Success -> LazyVerticalGrid(
-            columns = GridCells.Adaptive(80.dp),
-        ) {
-            items(state.cards) { card ->
-                CardItems(card)
+        is CardListUiState.Success -> {
+            Column(modifier = Modifier.fillMaxSize()) {
+
+                // Barre de recherche
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it }, // met à jour query
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    label = {Text("Rechercher une carte")},
+                    singleLine = true
+                )
+
+                // filtre des cartes
+                val filteredCards = state.cards.filter {
+                    it.name.contains(query, ignoreCase = true)
+                }
+
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(80.dp),
+                    modifier = Modifier.padding(4.dp)
+                ) {
+                    items(filteredCards) { card ->
+                        CardItems(card) }
+                }
             }
         }
     }
@@ -137,20 +156,9 @@ fun CardItems(card: Card) {
         }
         ColorFilter.colorMatrix(grayScaleMatrix)
     }
-//     var db = DbService()
-//     var cardDB = runBlocking { db.getCardId(card.id) }
-//     var isUnlock = ApiService.isUnlockCard(card, cardDB)
-
-//     val grayScaleColorFilter = if (isUnlock){
-//         ColorFilter.colorMatrix(grayScaleMatrix)
-//     }else {
-//         ColorFilter.colorMatrix(grayScaleMatrix)
-//     }
-
     AsyncImage(
         model = card.iconUrls.medium,
         contentDescription = card.name,
         colorFilter = colorFilter
-//         colorFilter = ColorFilter.colorMatrix(grayScaleMatrix),
     )
 }
