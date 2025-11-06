@@ -23,5 +23,15 @@ data class Card(
     val maxLevel: Int,
     val elixirCost: Int? = null,
     val iconUrls: IconUrls,
-    val rarity: String
+    val rarity: String,
+    val isOwned: Boolean = false,
+    val count: Int = 0,
+    val isFavorite: Boolean = false
+)
+
+data class OwnedCard(
+    val cardId: Int,
+    val count: Int = 0,
+    val acquisitionDate: Long? = null,
+    val isFavorite: Boolean = false
 )

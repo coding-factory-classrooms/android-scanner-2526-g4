@@ -28,7 +28,6 @@ import com.example.scanner.Card
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardListScreen(vm: CardListViewModel= viewModel()) {
-    val cards by vm.cardsFlow.collectAsState()
     val uiState by vm.uiStateFlow.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -69,14 +68,18 @@ fun CardListBody(state: CardListUiState) {
 
 @Composable
 fun CardItems(card: Card) {
-    val grayScaleMatrix = ColorMatrix().apply {
-        setToSaturation(0f)
+    val colorFilter = if (card.isOwned) {
+        null
+    } else {
+        val grayScaleMatrix = ColorMatrix().apply {
+            setToSaturation(0f)
+        }
+        ColorFilter.colorMatrix(grayScaleMatrix)
     }
-    val grayScaleColorFilter = ColorFilter.colorMatrix(grayScaleMatrix)
 
     AsyncImage(
         model = card.iconUrls.medium,
         contentDescription = card.name,
-        colorFilter = grayScaleColorFilter
+        colorFilter = colorFilter
     )
 }
