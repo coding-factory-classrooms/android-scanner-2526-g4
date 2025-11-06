@@ -23,5 +23,6 @@ data class Card(
     val maxLevel: Int,
     val elixirCost: Int? = null,
     val iconUrls: IconUrls,
-    val rarity: String
+    val rarity: String,
+    val isUnlock: Boolean? = false
 )

@@ -110,7 +110,8 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.4")
 
     // ZXing pour décoder le QR code
-    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     // (optionnel) Compose permissions
     implementation("com.google.accompanist:accompanist-permissions:0.36.0")

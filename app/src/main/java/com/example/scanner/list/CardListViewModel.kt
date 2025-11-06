@@ -1,8 +1,13 @@
 package com.example.scanner.list
 
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
 import androidx.lifecycle.ViewModel
 import com.example.scanner.ApiService
 import com.example.scanner.Card
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanIntentResult
+import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 
 sealed class CardListUiState {
