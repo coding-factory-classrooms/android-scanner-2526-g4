@@ -68,6 +68,14 @@ fun CardListScreen(vm: CardListViewModel= viewModel()) {
     LaunchedEffect(Unit) {
         vm.loadCards()
     }
+
+    val titleText = when (val state = uiState) {
+        is CardListUiState.Success -> {
+            "Collection (${state.ownedCount}/${state.totalCount})"
+        }
+        else -> "Collection"
+    }
+
     Scaffold(topBar = {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
@@ -75,7 +83,7 @@ fun CardListScreen(vm: CardListViewModel= viewModel()) {
                 titleContentColor = MaterialTheme.colorScheme.primary,
             ),
             title = {
-                Text("Collection")
+                Text(titleText)
             }
         )
     },
@@ -87,7 +95,7 @@ fun CardListScreen(vm: CardListViewModel= viewModel()) {
                 FloatingActionButton(
                     onClick = {
                         runBlocking {
-                            vm.initializeTestData()
+                            vm.createFakeCard("Legendary")
                         }
                     },
                     containerColor = Color.Red,
