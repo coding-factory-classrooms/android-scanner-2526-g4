@@ -50,7 +50,6 @@ import kotlinx.coroutines.runBlocking
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardListScreen(vm: CardListViewModel= viewModel()) {
-    val cards by vm.cardsFlow.collectAsState()
     val uiState by vm.uiStateFlow.collectAsState()
     val context = LocalContext.current
     val dbService = DbService();
@@ -130,23 +129,28 @@ fun CardListBody(state: CardListUiState) {
 
 @Composable
 fun CardItems(card: Card) {
-    val grayScaleMatrix = ColorMatrix().apply {
-        setToSaturation(0f)
-    }
-
-    var db = DbService()
-    var cardDB = runBlocking { db.getCardId(card.id) }
-    var isUnlock = ApiService.isUnlockCard(card, cardDB)
-
-    val grayScaleColorFilter = if (isUnlock){
-        ColorFilter.colorMatrix(grayScaleMatrix)
-    }else {
+    val colorFilter = if (card.isOwned) {
+        null
+    } else {
+        val grayScaleMatrix = ColorMatrix().apply {
+            setToSaturation(0f)
+        }
         ColorFilter.colorMatrix(grayScaleMatrix)
     }
+//     var db = DbService()
+//     var cardDB = runBlocking { db.getCardId(card.id) }
+//     var isUnlock = ApiService.isUnlockCard(card, cardDB)
+
+//     val grayScaleColorFilter = if (isUnlock){
+//         ColorFilter.colorMatrix(grayScaleMatrix)
+//     }else {
+//         ColorFilter.colorMatrix(grayScaleMatrix)
+//     }
 
     AsyncImage(
         model = card.iconUrls.medium,
         contentDescription = card.name,
-        colorFilter = ColorFilter.colorMatrix(grayScaleMatrix),
+        colorFilter = colorFilter
+//         colorFilter = ColorFilter.colorMatrix(grayScaleMatrix),
     )
 }
