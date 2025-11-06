@@ -1,24 +1,39 @@
 package com.example.scanner
 
+import androidx.annotation.NonNull
 import io.paperdb.Paper
 
 class DbService {
 
 
     suspend fun saveCardId(id: Int){
-        val card = ApiService.getCardById(id);
-        Paper.book().write(id.toString(), card);
+        val getCurrentcard = ApiService.getCardById(id);
+        val ownedCard = OwnedCard(id, getCurrentcard.count, getCurrentcard.acquisitionDate, getCurrentcard.isFavorite);
+        Paper.book().write(id.toString(), ownedCard);
     }
 
     suspend fun deleteCard(id: Int){
         Paper.book().delete(id.toString())
     }
 
-    suspend fun getCardId(id: Int): Card?{
-        if (Paper.book().read<Card>(id.toString()) == null){
-            return null
-        }
+    fun getCardId(id: Int): Card?{
         return Paper.book().read<Card>(id.toString());
+    }
+
+    fun getAllCard(): Map<Int, OwnedCard> {
+        val allKeys = Paper.book().allKeys
+        val ownedCards = mutableMapOf<Int, OwnedCard>()
+
+        allKeys.forEach { key ->
+            val card = Paper.book().read<OwnedCard>(key)
+            if (card != null) {
+                val cardId = key.toIntOrNull()
+                if (cardId != null) {
+                    ownedCards[cardId] = card
+                }
+            }
+        }
+        return ownedCards
     }
 
 }
