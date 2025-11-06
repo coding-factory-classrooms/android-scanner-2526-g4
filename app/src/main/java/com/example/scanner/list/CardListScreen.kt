@@ -41,7 +41,6 @@ import coil3.compose.AsyncImage
 import com.example.scanner.ApiService
 import com.example.scanner.Card
 import com.example.scanner.DbService
-import com.example.scanner.ScannerActivity
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
