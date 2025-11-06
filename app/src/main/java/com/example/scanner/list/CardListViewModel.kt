@@ -3,11 +3,13 @@ package com.example.scanner.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scanner.ApiService
+import com.example.scanner.ApiService.getCardById
 import com.example.scanner.Card
 import com.example.scanner.OwnedCard
 import io.paperdb.Paper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.util.Date
 
 sealed class CardListUiState {
     data object Loading : CardListUiState()
@@ -24,7 +26,7 @@ class CardListViewModel : ViewModel() {
         return Paper.book().read(DB_KEY, emptyMap<Int, OwnedCard>())!!.toMutableMap()
     }
 
-     fun loadCards() {
+    fun loadCards() {
          viewModelScope.launch {
              uiStateFlow.value = CardListUiState.Loading
 
@@ -51,4 +53,23 @@ class CardListViewModel : ViewModel() {
              uiStateFlow.value = CardListUiState.Success(finalCards)
          }
      }
+
+    suspend fun initializeTestData() {
+        val fakeScannedCard = getCardById(26000008)
+        val currentCardsMap = Paper.book().read<MutableMap<Int, OwnedCard>>(DB_KEY) ?: mutableMapOf()
+
+        // N'ajouter les données de test que si la DB est vide
+        if (currentCardsMap.isEmpty()) {
+
+            val newCard = OwnedCard(
+                cardId = fakeScannedCard.id,
+                count = 1,
+                acquisitionDate = Date().time,
+                isFavorite = false
+            )
+            currentCardsMap[fakeScannedCard.id] = newCard
+
+            Paper.book().write(DB_KEY, currentCardsMap)
+        }
+    }
 }
