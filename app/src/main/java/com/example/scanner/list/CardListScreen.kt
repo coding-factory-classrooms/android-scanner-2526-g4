@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -79,23 +80,41 @@ fun CardListScreen(vm: CardListViewModel= viewModel()) {
         )
     },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val options = ScanOptions()
-                    options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-                    options.setPrompt("Scan a QRCode")
-                    options.setCameraId(0)
-                    options.setBeepEnabled(true)
-                    options.setBarcodeImageEnabled(true)
-                    qrCodeLauncher.launch(ScanOptions())
-                },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.Bottom
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Ajouter")
+                FloatingActionButton(
+                    onClick = {
+                        runBlocking {
+                            vm.initializeTestData()
+                        }
+                    },
+                    containerColor = Color.Red,
+                    contentColor = Color.White
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Deuxième Action")
+                }
+
+                FloatingActionButton(
+                    onClick = {
+                        val options = ScanOptions()
+                        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                        options.setPrompt("Scan a QRCode")
+                        options.setCameraId(0)
+                        options.setBeepEnabled(true)
+                        options.setBarcodeImageEnabled(true)
+                        qrCodeLauncher.launch(ScanOptions())
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Ajouter")
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.End
+
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             CardListBody(uiState)

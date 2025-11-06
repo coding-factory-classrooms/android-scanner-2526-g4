@@ -17,7 +17,6 @@ class CardListActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Paper.init(this)
-        initializeTestData()
         setContent {
             ScannerTheme {
                 CardListScreen()

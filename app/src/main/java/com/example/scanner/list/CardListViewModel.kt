@@ -55,12 +55,17 @@ class CardListViewModel : ViewModel() {
      }
 
     suspend fun initializeTestData() {
-        val fakeScannedCard = getCardById(26000008)
+        val fakeScannedCard = getCardById(26000007)
         val currentCardsMap = Paper.book().read<MutableMap<Int, OwnedCard>>(DB_KEY) ?: mutableMapOf()
 
-        // N'ajouter les données de test que si la DB est vide
-        if (currentCardsMap.isEmpty()) {
+        val existingCard = currentCardsMap[fakeScannedCard.id]
 
+        if (existingCard != null) {
+            val updatedCard = existingCard.copy(
+                count = existingCard.count + 1
+            )
+            currentCardsMap[fakeScannedCard.id] = updatedCard
+        } else {
             val newCard = OwnedCard(
                 cardId = fakeScannedCard.id,
                 count = 1,
@@ -68,8 +73,8 @@ class CardListViewModel : ViewModel() {
                 isFavorite = false
             )
             currentCardsMap[fakeScannedCard.id] = newCard
-
-            Paper.book().write(DB_KEY, currentCardsMap)
         }
+        Paper.book().write(DB_KEY, currentCardsMap)
+        loadCards()
     }
 }
