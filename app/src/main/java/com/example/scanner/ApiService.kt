@@ -42,34 +42,19 @@ object ApiService {
             throw Exception("Échec API: Statut ${response.status.value}. Clé Bearer invalide ou expirée.")
         }
 
-//        var tests = response.body<CardListResponse>();
-//        for (test in tests.items){
-//            print("TEST ${test.name}")
-//            print("TEST ${test.isUnlock}")
-//            var db = DbService()
-//            var card = db.getCardId(test.id);
-//            if (test.isUnlock != card?.isUnlock){
-//            }
-//        }
-//        tests.items.filter { it -> print("HABITOX ${it}"); it.isUnlock == false  }.forEach { print("HABITOX ${it.name}") }
-//        print("HABITOX ${tests.items[0].name}");
-//        print("HABITOX ${tests.items[0].isUnlock}");
-//        print("HABITOX ${tests.items[1].name}");
-//        print("HABITOX ${tests.items[1].isUnlock}");
-
         return response.body<CardListResponse>()
     }
 
-    fun isUnlockCard(cardApi: Card, cardDB: Card?): Boolean{
-        var card = cardApi.isUnlock
-        if (cardDB == null){
-            return false
-        }
-        var cardDB = cardDB.isUnlock;
-
-        if (card != cardDB) return true;
-        return false
-    }
+//    fun isUnlockCard(cardApi: Card, cardDB: Card?): Boolean{
+//        var card = cardApi.isUnlock
+//        if (cardDB == null){
+//            return false
+//        }
+//        var cardDB = cardDB.isUnlock;
+//
+//        if (card != cardDB) return true;
+//        return false
+//    }
 
 
     // L'api ne permet pas de recup qu'une seule carte avec un id, donc on recup tout puis on fait la recherche nous même

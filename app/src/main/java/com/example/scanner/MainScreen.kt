@@ -45,8 +45,8 @@ fun ApiScreen(cardId: Int) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    val intent = Intent(context, ScannerActivity::class.java)
-                    context.startActivity(intent)
+//                    val intent = Intent(context, ScannerActivity::class.java)
+//                    context.startActivity(intent)
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White

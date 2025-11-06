@@ -33,6 +33,6 @@ data class OwnedCard(
     val cardId: Int,
     val count: Int = 0,
     val acquisitionDate: Long? = null,
-    val isFavorite: Boolean = false
-    val isUnlock: Boolean? = false
+    val isFavorite: Boolean = false,
+//    val isUnlock: Boolean? = false
 )
