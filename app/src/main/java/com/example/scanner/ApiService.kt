@@ -1,6 +1,5 @@
 package com.example.scanner
 
-import android.graphics.ColorMatrix
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -9,10 +8,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import com.example.scanner.BuildConfig
-import io.ktor.http.content.MultiPartData
-import io.paperdb.Paper
-
 
 object ApiService {
 
@@ -44,18 +39,6 @@ object ApiService {
 
         return response.body<CardListResponse>()
     }
-
-//    fun isUnlockCard(cardApi: Card, cardDB: Card?): Boolean{
-//        var card = cardApi.isUnlock
-//        if (cardDB == null){
-//            return false
-//        }
-//        var cardDB = cardDB.isUnlock;
-//
-//        if (card != cardDB) return true;
-//        return false
-//    }
-
 
     // L'api ne permet pas de recup qu'une seule carte avec un id, donc on recup tout puis on fait la recherche nous même
     suspend fun getCardById(id: Int): Card {

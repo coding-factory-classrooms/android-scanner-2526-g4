@@ -26,7 +26,8 @@ data class Card(
     val rarity: String,
     val isOwned: Boolean = false,
     val count: Int = 0,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val acquisitionDate: Long? = null,
 )
 
 data class OwnedCard(
@@ -34,5 +35,4 @@ data class OwnedCard(
     val count: Int = 0,
     val acquisitionDate: Long? = null,
     val isFavorite: Boolean = false,
-//    val isUnlock: Boolean? = false
 )

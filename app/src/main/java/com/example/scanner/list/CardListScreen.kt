@@ -1,11 +1,7 @@
 package com.example.scanner.list
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,11 +34,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
-import com.example.scanner.ApiService
 import com.example.scanner.Card
 import com.example.scanner.DbService
 import com.journeyapps.barcodescanner.ScanContract
-import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.runBlocking
 
@@ -89,8 +83,6 @@ fun CardListScreen(vm: CardListViewModel= viewModel()) {
                     options.setBeepEnabled(true)
                     options.setBarcodeImageEnabled(true)
                     qrCodeLauncher.launch(ScanOptions())
-//                   val intent = Intent(context, ScannerActivity::class.java)
-//                    context.startActivity(intent)
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White
@@ -137,20 +129,9 @@ fun CardItems(card: Card) {
         }
         ColorFilter.colorMatrix(grayScaleMatrix)
     }
-//     var db = DbService()
-//     var cardDB = runBlocking { db.getCardId(card.id) }
-//     var isUnlock = ApiService.isUnlockCard(card, cardDB)
-
-//     val grayScaleColorFilter = if (isUnlock){
-//         ColorFilter.colorMatrix(grayScaleMatrix)
-//     }else {
-//         ColorFilter.colorMatrix(grayScaleMatrix)
-//     }
-
     AsyncImage(
         model = card.iconUrls.medium,
         contentDescription = card.name,
         colorFilter = colorFilter
-//         colorFilter = ColorFilter.colorMatrix(grayScaleMatrix),
     )
 }
