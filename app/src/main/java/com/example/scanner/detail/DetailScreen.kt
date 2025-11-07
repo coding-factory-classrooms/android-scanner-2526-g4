@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -17,10 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.scanner.Card
+import com.example.scanner.MainActivity
 import com.example.scanner.list.CardListActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,6 +33,8 @@ fun DetailScreen(cardId: Int, vm: DetailViewModel = viewModel()) {
 
     val context = LocalContext.current
     val uiState by vm.uiState.collectAsState()
+//    val navController = rememberNavController()
+
 
     // Charger la carte une seule fois
     LaunchedEffect(cardId) {
@@ -43,6 +49,17 @@ fun DetailScreen(cardId: Int, vm: DetailViewModel = viewModel()) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = { Text("Détail de la carte") },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        context.startActivity(Intent(context, MainActivity::class.java))
+                    }
+                        ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Go to home hihiha"
+                        )
+                    }
+                },
                 actions = {
                     val uiState = vm.uiState.collectAsState().value
                     if (uiState is DetailUiState.Success && uiState.card.isOwned == true) {
@@ -99,6 +116,8 @@ fun DetailScreen(cardId: Int, vm: DetailViewModel = viewModel()) {
 
 @Composable
 fun CardDetailContent(card: Card, vm: DetailViewModel = viewModel()) {
+    val data = arrayOf(card.rarity.capitalize(), card.elixirCost, card.maxLevel, "Je suis une donnée");
+    val subtitle = arrayOf("Rareté", "Coût Elixir", "Level Max", "Donnée");
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp),
@@ -135,11 +154,6 @@ fun CardDetailContent(card: Card, vm: DetailViewModel = viewModel()) {
                     )
                 }
             }
-            Text(
-                text = "Level 48 Super Rare",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
         
         LazyVerticalGrid(
@@ -148,7 +162,7 @@ fun CardDetailContent(card: Card, vm: DetailViewModel = viewModel()) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            items(4) {
+            items(4) { index ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -165,8 +179,8 @@ fun CardDetailContent(card: Card, vm: DetailViewModel = viewModel()) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("Damage")
-                        Text("9827398")
+                        Text(subtitle[index])
+                        Text("${data[index]}")
                     }
                 }
             }
