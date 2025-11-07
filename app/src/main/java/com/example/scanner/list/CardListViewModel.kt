@@ -53,16 +53,16 @@ class CardListViewModel : ViewModel() {
         }
     }
 
-    private fun getOwnedCardsFromDb(): MutableMap<Int, OwnedCard> {
-        return Paper.book().read(DB_KEY, emptyMap<Int, OwnedCard>())!!.toMutableMap()
-    }
+//    private fun getOwnedCardsFromDb(): MutableMap<Int, OwnedCard> {
+//        return Paper.book().read(DB_KEY, emptyMap<Int, OwnedCard>())!!.toMutableMap()
+//    }
 
     fun loadCards() {
         viewModelScope.launch {
             uiStateFlow.value = CardListUiState.Loading
 
             val cardListResponse = fetchAllCards().items
-            val ownedCards = getOwnedCardsFromDb()
+            val ownedCards = DbService().getAllCard()
 
             val totalCount = cardListResponse.size
             val ownedCount = ownedCards.size
