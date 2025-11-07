@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,7 +43,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -54,6 +54,7 @@ import com.example.scanner.Card
 import com.example.scanner.detail.DetailActivity
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
+import kotlinx.coroutines.runBlocking
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,6 +64,7 @@ fun CardListScreen(vm: CardListViewModel = viewModel()) {
     val scannedCards by vm.scannedCards.collectAsState()
     val bShowPopup by vm.bShowPopup.collectAsState()
     val context = LocalContext.current
+    val dbService = DbService();
 
     val qrCodeLauncher = rememberLauncherForActivityResult(ScanContract()) { result ->
         if (result.contents != null) {
@@ -78,28 +80,58 @@ fun CardListScreen(vm: CardListViewModel = viewModel()) {
         vm.loadCards()
     }
 
-    Scaffold(
-        topBar = { TopAppBar(
+    val titleText = when (val state = uiState) {
+        is CardListUiState.Success -> {
+            "Collection (${state.ownedCount}/${state.totalCount})"
+        }
+        else -> "Collection"
+    }
+
+    Scaffold(topBar = {
+        TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 titleContentColor = MaterialTheme.colorScheme.primary,
             ),
             title = {
-                Text("Collection")
+                Text(titleText)
             }
-        ) },
+        )
+    },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                val options = ScanOptions().apply {
-                    setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-                    setPrompt("Scan un QR Code")
-                    setBeepEnabled(true)
-                    setBarcodeImageEnabled(true)
-                    setOrientationLocked(false)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        runBlocking {
+                            vm.createFakeCard("Legendary")
+                        }
+                    },
+                    containerColor = Color.Red,
+                    contentColor = Color.White
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Deuxième Action")
                 }
-                qrCodeLauncher.launch(options)
-            }) { Icon(Icons.Default.Add, contentDescription = "Ajouter") }
-        }
+
+                FloatingActionButton(
+                    onClick = {
+                        val options = ScanOptions()
+                        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                        options.setPrompt("Scan a QRCode")
+                        options.setCameraId(0)
+                        options.setBeepEnabled(true)
+                        options.setBarcodeImageEnabled(true)
+                        qrCodeLauncher.launch(options)
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Ajouter")
+                }
+            }
+        },
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             CardListBody(uiState)
@@ -193,7 +225,6 @@ fun CardListBody(state: CardListUiState) {
     }
 }
 
-
 @Composable
 fun CardItems(card: Card) {
     // a changer de place stp (au moi de ce soir)
@@ -207,14 +238,11 @@ fun CardItems(card: Card) {
         }
         ColorFilter.colorMatrix(grayScaleMatrix)
     }
-
     AsyncImage(
         model = card.iconUrls.medium,
         contentDescription = card.name,
         colorFilter = colorFilter,
         modifier = Modifier
-            .padding(4.dp)
-            .size(100.dp)
             .clickable {
                 if(card.isOwned == true){
                     val intent = Intent(context, DetailActivity::class.java)
