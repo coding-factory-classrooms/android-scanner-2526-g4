@@ -12,12 +12,19 @@ class DbService {
         Paper.book().write(id.toString(), ownedCard);
     }
 
-    suspend fun deleteCard(id: Int){
+    suspend fun deleteOwnedCard(id: Int){
         Paper.book().delete(id.toString())
     }
 
-    fun getCardId(id: Int): Card?{
-        return Paper.book().read<Card>(id.toString());
+    suspend fun setFavorite(id: Int, isFavorite: Boolean) {
+        println("AAAAAAAAAAAAA${id}${isFavorite}")
+        val ownedCard = getOwnedCardId(id)
+        val updatedCard = ownedCard!!.copy(isFavorite = isFavorite)
+        Paper.book().write(id.toString(), updatedCard)
+    }
+
+    fun getOwnedCardId(id: Int): OwnedCard? {
+        return Paper.book().read<OwnedCard>(id.toString())
     }
 
     fun getAllCard(): Map<Int, OwnedCard> {

@@ -24,18 +24,43 @@ class DetailViewModel : ViewModel() {
 
     fun loadCard(cardId: Int) {
         viewModelScope.launch {
-            println("🔄 [DetailViewModel] Chargement de la carte ID=$cardId ...")
             _uiState.value = DetailUiState.Loading
 
-            val card = ApiService.getCardById(cardId)
+            val apiCard = ApiService.getCardById(cardId)
+            val ownedCard = dbService.getOwnedCardId(cardId)
 
-            if (card != null) {
-                println("🔄 [DetailViewModel]=$cardId")
-                _uiState.value = DetailUiState.Success(card)
-            } else {
-                println("🔄 [DetailViewModel] Chargement de la carte ID=$cardId ...")
-                _uiState.value = DetailUiState.Error("Carte non trouvée")
+            // Fusionner les infos API + DB (surtout pour les fav)
+            val mergedCard = apiCard.copy(
+                isFavorite = ownedCard?.isFavorite ?: false,
+                isOwned = ownedCard != null,
+                count = ownedCard?.count ?: 0,
+                acquisitionDate = ownedCard?.acquisitionDate
+            )
+
+            _uiState.value = DetailUiState.Success(mergedCard)
+        }
+    }
+
+
+    fun toggleFavorite() {
+        val currentState = _uiState.value
+        if (currentState is DetailUiState.Success) {
+            val card = currentState.card
+            val newFavorite = !(card.isFavorite ?: false)
+
+            viewModelScope.launch {
+                dbService.setFavorite(card.id, newFavorite)
+
+                // Recharge la carte pour l’UI
+                val updatedCard = card.copy(isFavorite = newFavorite)
+                _uiState.value = DetailUiState.Success(updatedCard)
             }
+        }
+    }
+
+    fun deleteCard(cardId: Int) {
+        viewModelScope.launch {
+            DbService().deleteOwnedCard(cardId)
         }
     }
 }
