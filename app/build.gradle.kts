@@ -120,4 +120,5 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 //
     testImplementation("com.google.truth:truth:1.4.4")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }
