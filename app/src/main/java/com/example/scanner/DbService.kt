@@ -17,7 +17,6 @@ class DbService {
     }
 
     suspend fun setFavorite(id: Int, isFavorite: Boolean) {
-        println("AAAAAAAAAAAAA${id}${isFavorite}")
         val ownedCard = getOwnedCardId(id)
         val updatedCard = ownedCard!!.copy(isFavorite = isFavorite)
         Paper.book().write(id.toString(), updatedCard)

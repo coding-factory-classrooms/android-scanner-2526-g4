@@ -36,7 +36,7 @@ class CardListViewModel : ViewModel() {
         viewModelScope.launch {
             uiStateFlow.value = CardListUiState.Loading
             val apiCards = fetchAllCards().items
-            val ownedCards = DbService().getAllCard()
+            val ownedCards = getOwnedCardsFromDb()
 
             val totalCount = apiCards.size
             val ownedCount = ownedCards.size
@@ -65,7 +65,7 @@ class CardListViewModel : ViewModel() {
         val randomIdCard = getRandomCards(Chests.chestMap[chest])
 
         val fakeScannedCard = getCardById(randomIdCard)
-        val currentCardsMap = Paper.book().read<MutableMap<Int, OwnedCard>>(randomIdCard.toString()) ?: mutableMapOf()
+        val currentCardsMap = Paper.book().read<MutableMap<Int, OwnedCard>>(DB_KEY) ?: mutableMapOf()
 
         val existingCard = currentCardsMap[fakeScannedCard.id]
 
