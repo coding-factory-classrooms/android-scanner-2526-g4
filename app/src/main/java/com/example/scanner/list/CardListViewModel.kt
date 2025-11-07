@@ -99,14 +99,14 @@ class CardListViewModel : ViewModel() {
         val rareCards = allCards.items.filter { card -> card.rarity == "rare" }
         val epicCards = allCards.items.filter { card -> card.rarity == "epic" }
         val legendaryCards = allCards.items.filter { card -> card.rarity == "legendary" }
-        val heroCards = allCards.items.filter { card -> card.rarity == "hero" }
+        val championCards = allCards.items.filter { card -> card.rarity == "champion" }
 
         val chest = buildList {
             repeat(chest!!.common) { add(commonCards.random()) }
             repeat(chest.rare) { add(rareCards.random()) }
             repeat(chest.epic) { add(epicCards.random()) }
             repeat(chest.legendary) { add(legendaryCards.random()) }
-            repeat(chest.hero) { add(heroCards.random()) }
+            repeat(chest.champion) { add(championCards.random()) }
         }
 
         val card = chest.random()

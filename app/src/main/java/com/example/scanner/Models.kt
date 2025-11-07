@@ -42,7 +42,7 @@ data class Chest(
     val rare: Int,
     val epic: Int,
     val legendary: Int,
-    val hero: Int
+    val champion: Int
 )
 
 object Chests {
@@ -51,7 +51,7 @@ object Chests {
         rare = 3,
         epic = 1,
         legendary = 0,
-        hero = 0
+        champion = 0
     )
 
     val Silver = Chest(
@@ -59,7 +59,7 @@ object Chests {
         rare = 30,
         epic = 19,
         legendary = 1,
-        hero = 0
+        champion = 0
     )
 
     val Gold = Chest(
@@ -67,7 +67,7 @@ object Chests {
         rare = 40,
         epic = 25,
         legendary = 4,
-        hero = 1
+        champion = 1
     )
 
     val Epic = Chest(
@@ -75,7 +75,7 @@ object Chests {
         rare = 0,
         epic = 1,
         legendary = 0,
-        hero = 0
+        champion = 0
     )
 
     val Giant = Chest(
@@ -83,7 +83,7 @@ object Chests {
         rare = 10,
         epic = 4,
         legendary = 5,
-        hero = 1
+        champion = 1
     )
 
     val Magic = Chest(
@@ -91,7 +91,7 @@ object Chests {
         rare = 4,
         epic = 10,
         legendary = 5,
-        hero = 1
+        champion = 1
     )
 
     val Legendary = Chest(
@@ -99,7 +99,7 @@ object Chests {
         rare = 0,
         epic = 0,
         legendary = 1,
-        hero = 0
+        champion = 0
     )
 
     val Lucky = Chest(
@@ -107,7 +107,7 @@ object Chests {
         rare = 1,
         epic = 1,
         legendary = 1,
-        hero = 1
+        champion = 1
     )
 
     val chestMap = mapOf(
