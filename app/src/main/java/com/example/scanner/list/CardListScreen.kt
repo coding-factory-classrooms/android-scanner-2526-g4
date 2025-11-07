@@ -245,8 +245,6 @@ fun CardItems(card: Card) {
         contentDescription = card.name,
         colorFilter = colorFilter,
         modifier = Modifier
-            .padding(4.dp)
-            .size(100.dp)
             .clickable {
                 if(card.isOwned == true){
                     val intent = Intent(context, DetailActivity::class.java)

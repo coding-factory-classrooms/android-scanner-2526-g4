@@ -2,7 +2,6 @@ package com.example.scanner.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.scanner.ApiService
 import com.example.scanner.ApiService.fetchAllCards
 import com.example.scanner.ApiService.getCardById
 import com.example.scanner.Card
@@ -14,6 +13,7 @@ import io.paperdb.Paper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
+import kotlin.collections.map
 
 sealed class CardListUiState {
     data object Loading : CardListUiState()
@@ -32,7 +32,7 @@ class CardListViewModel : ViewModel() {
     val scannedCards = MutableStateFlow<List<Card>>(emptyList()) // pour la popup
     val bShowPopup = MutableStateFlow(false)
 
-    fun loadCards() {
+    fun loadCardsPierre() {
         viewModelScope.launch {
             uiStateFlow.value = CardListUiState.Loading
             val apiCards = fetchAllCards().items
@@ -48,6 +48,41 @@ class CardListViewModel : ViewModel() {
                     count = owned?.count ?: 0,
                     isFavorite = owned?.isFavorite ?: false
                 )
+            }
+            uiStateFlow.value = CardListUiState.Success(finalCards, totalCount, ownedCount)
+        }
+    }
+
+    private fun getOwnedCardsFromDb(): MutableMap<Int, OwnedCard> {
+        return Paper.book().read(DB_KEY, emptyMap<Int, OwnedCard>())!!.toMutableMap()
+    }
+
+    fun loadCards() {
+        viewModelScope.launch {
+            uiStateFlow.value = CardListUiState.Loading
+
+            val cardListResponse = fetchAllCards().items
+            val ownedCards = getOwnedCardsFromDb()
+
+            val totalCount = cardListResponse.size
+            val ownedCount = ownedCards.size
+
+            val finalCards = cardListResponse.map { apiCard ->
+                val ownedCard = ownedCards[apiCard.id]
+
+                if (ownedCard != null) {
+                    apiCard.copy(
+                        isOwned = true,
+                        count = ownedCard.count,
+                        isFavorite = ownedCard.isFavorite
+                    )
+                } else {
+                    apiCard.copy(
+                        isOwned = false,
+                        count = 0,
+                        isFavorite = false
+                    )
+                }
             }
             uiStateFlow.value = CardListUiState.Success(finalCards, totalCount, ownedCount)
         }
