@@ -32,7 +32,7 @@ class CardListViewModel : ViewModel() {
     val scannedCards = MutableStateFlow<List<Card>>(emptyList()) // pour la popup
     val bShowPopup = MutableStateFlow(false)
 
-    fun loadCardsPierre() {
+    fun loadCards() {
         viewModelScope.launch {
             uiStateFlow.value = CardListUiState.Loading
             val apiCards = fetchAllCards().items
@@ -53,66 +53,19 @@ class CardListViewModel : ViewModel() {
         }
     }
 
-//    private fun getOwnedCardsFromDb(): MutableMap<Int, OwnedCard> {
-//        return Paper.book().read(DB_KEY, emptyMap<Int, OwnedCard>())!!.toMutableMap()
-//    }
-
-    fun loadCards() {
-        viewModelScope.launch {
-            uiStateFlow.value = CardListUiState.Loading
-
-            val cardListResponse = fetchAllCards().items
-            val ownedCards = DbService().getAllCard()
-
-            val totalCount = cardListResponse.size
-            val ownedCount = ownedCards.size
-
-            val finalCards = cardListResponse.map { apiCard ->
-                val ownedCard = ownedCards[apiCard.id]
-
-                if (ownedCard != null) {
-                    apiCard.copy(
-                        isOwned = true,
-                        count = ownedCard.count,
-                        isFavorite = ownedCard.isFavorite
-                    )
-                } else {
-                    apiCard.copy(
-                        isOwned = false,
-                        count = 0,
-                        isFavorite = false
-                    )
-                }
-            }
-            uiStateFlow.value = CardListUiState.Success(finalCards, totalCount, ownedCount)
-        }
+    private fun getOwnedCardsFromDb(): MutableMap<Int, OwnedCard> {
+        return Paper.book().read(DB_KEY, emptyMap<Int, OwnedCard>())!!.toMutableMap()
     }
 
-
-    fun handleScannedIds(ids: List<Int>) {
-        viewModelScope.launch {
-            val db = DbService()
-            val cards = mutableListOf<Card>()
-            ids.forEach { id ->
-                try {
-                    val card = getCardById(id)
-                    db.saveCardId(id)
-                    cards.add(card)
-                } catch (e: Exception) {
-                    println("Carte $id non trouvée : ${e.message}")
-                }
-            }
-            scannedCards.value = cards
-            bShowPopup.value = true
-            loadCards()
-        }
+    suspend fun handleScanned(chest: String) {
+        createFakeCard(chest)
     }
 
     suspend fun createFakeCard(chest: String) {
         val randomIdCard = getRandomCards(Chests.chestMap[chest])
 
         val fakeScannedCard = getCardById(randomIdCard)
-        val currentCardsMap = Paper.book().read<MutableMap<Int, OwnedCard>>(DB_KEY) ?: mutableMapOf()
+        val currentCardsMap = Paper.book().read<MutableMap<Int, OwnedCard>>(randomIdCard.toString()) ?: mutableMapOf()
 
         val existingCard = currentCardsMap[fakeScannedCard.id]
 
@@ -132,8 +85,11 @@ class CardListViewModel : ViewModel() {
             )
             currentCardsMap[fakeScannedCard.id] = newCard
         }
-        //Paper.book().write(DB_KEY, currentCardsMap)
-        //loadCards()
+        Paper.book().write(DB_KEY, currentCardsMap)
+        scannedCards.value = emptyList()
+        scannedCards.value += fakeScannedCard
+        bShowPopup.value = true
+        loadCards()
     }
 
     suspend fun getRandomCards(chest: Chest?): Int {

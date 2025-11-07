@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,6 +42,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -51,10 +51,10 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import com.example.scanner.Card
-import com.example.scanner.DbService
 import com.example.scanner.detail.DetailActivity
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
@@ -65,13 +65,14 @@ fun CardListScreen(vm: CardListViewModel = viewModel()) {
     val scannedCards by vm.scannedCards.collectAsState()
     val bShowPopup by vm.bShowPopup.collectAsState()
     val context = LocalContext.current
-    val dbService = DbService();
+    val scope = rememberCoroutineScope()
 
     val qrCodeLauncher = rememberLauncherForActivityResult(ScanContract()) { result ->
         if (result.contents != null) {
-            val ids = result.contents.split(",").mapNotNull { it.toIntOrNull() }
-            vm.handleScannedIds(ids) // déléguer au ViewModel
-            Toast.makeText(context, "Scan réussi", Toast.LENGTH_LONG).show()
+            scope.launch {
+                vm.handleScanned(result.contents.toString())
+                Toast.makeText(context, "Scan réussi", Toast.LENGTH_LONG).show()
+            }
         } else {
             Toast.makeText(context, "Annulé", Toast.LENGTH_LONG).show()
         }
@@ -164,6 +165,7 @@ fun CardListScreen(vm: CardListViewModel = viewModel()) {
             }
         )
     }
+
 }
 
 @Composable
